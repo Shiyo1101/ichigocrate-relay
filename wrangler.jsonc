@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "ichigocrate-relay",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-10-28",
+  "durable_objects": {
+    "bindings": [{ "name": "ROOMS", "class_name": "Room" }],
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Room"] }],
+  "ratelimits": [
+    {
+      // IP と部屋の組ごとに数える。学校などで同じ IP を共有していても、部屋が違えば別に数える
+      "name": "RATE_LIMITER",
+      "namespace_id": "1001",
+      "simple": { "limit": 120, "period": 60 },
+    },
+  ],
+  "observability": { "enabled": true },
+}
