@@ -1,0 +1,31 @@
+{
+  "name": "ichigocrate-relay",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Relay server for ichigocrate (IchigoJam BASIC) network play, running on Cloudflare Workers.",
+  "license": "MIT",
+  "author": "Shiyo1101",
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "cf-typegen": "wrangler types",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "lint": "oxlint",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check"
+  },
+  "dependencies": {
+    "hono": "^4.13.16"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-plugin": "^1.4.12",
+    "oxfmt": "^0.75.0",
+    "oxlint": "^1.90.0",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5",
+    "wrangler": "^4.156.1"
+  },
+  "packageManager": "pnpm@11.9.0"
+}

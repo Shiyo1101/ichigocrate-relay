@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "import", "vitest"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error",
+    "perf": "warn",
+    "pedantic": "off",
+    "style": "off",
+    "restriction": "off"
+  },
+  "rules": {
+    "typescript/no-explicit-any": "error"
+  },
+  "overrides": [
+    {
+      // 受信箱の順序や回数制限を確かめるため、テストでは 1 件ずつ順に送る
+      "files": ["test/**"],
+      "rules": { "no-await-in-loop": "off" }
+    }
+  ],
+  "ignorePatterns": ["worker-configuration.d.ts"]
+}
