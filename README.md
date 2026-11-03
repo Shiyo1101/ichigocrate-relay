@@ -4,6 +4,14 @@
 
 ichigocrate 同士は直接つながれない (ルーター越し・ブラウザは接続を受けられない) ので、このサーバーの「受信箱」を介してメッセージをやりとりする。
 
+## 公開中の中継サーバー
+
+```
+https://ichigocrate-relay.uchii.workers.dev
+```
+
+誰でも使える。Cloudflare の無料プランで動かしているので、利用が多いと 1 日の上限に達して翌日 (UTC 0 時) まで使えなくなることがある。たくさん使う場合は、自分の Cloudflare アカウントにデプロイする (下記)。
+
 ## API: 部屋ごと・宛先ごとの受信箱
 
 | メソッド | パス               | 動作                                                                              |
@@ -26,12 +34,14 @@ ichigocrate 同士は直接つながれない (ルーター越し・ブラウザ
 ## ichigocrate からの使い方
 
 ```basic
-10 POST "https://<あなたの Worker>.workers.dev/r/42/B","D3",#1200,0   ' 相手 B へ自分の手を送る
-20 NET GET "https://<あなたの Worker>.workers.dev/r/42/A",#1200,2048  ' 自分 A 宛てを取りに行く
+10 POST "https://ichigocrate-relay.uchii.workers.dev/r/42/B","D3",#1200,0   ' 相手 B へ自分の手を送る
+20 NET GET "https://ichigocrate-relay.uchii.workers.dev/r/42/A",#1200,2048  ' 自分 A 宛てを取りに行く
 30 IF NET()<0 GOTO 30
-40 IF NET()=0 WAIT 30:GOTO 20                                          ' まだ届いていない
+40 IF NET()=0 WAIT 30:GOTO 20                                               ' まだ届いていない
 50 ?STR$(#1200)
 ```
+
+これを使った〇×ゲームのネット対戦サンプルが ichigocrate の [samples/net-oxo.bas](https://github.com/Shiyo1101/ichigocrate/blob/main/samples/net-oxo.bas) にある (遊び方は [samples/README.md](https://github.com/Shiyo1101/ichigocrate/blob/main/samples/README.md))。
 
 `GET` / `POST` / `NET GET` / `NET POST` と `NET()` の詳細は ichigocrate の [core/README.md](https://github.com/Shiyo1101/ichigocrate/blob/main/core/README.md) を参照。web 版の ichigocrate から使えるよう、CORS (`X-Ichigocrate` と `Content-Type` ヘッダ) を許可している。
 
@@ -47,8 +57,10 @@ ichigocrate 同士は直接つながれない (ルーター越し・ブラウザ
 ```bash
 pnpm install
 pnpm exec wrangler login   # Cloudflare アカウントでログイン
-pnpm run deploy            # https://ichigocrate-relay.<アカウント>.workers.dev に公開
+pnpm run deploy            # https://ichigocrate-relay.<アカウントのサブドメイン>.workers.dev に公開
 ```
+
+workers.dev の URL は `https://<Worker 名>.<アカウントのサブドメイン>.workers.dev` になる。Worker 名は `wrangler.jsonc` の `name`、アカウントのサブドメインは Cloudflare のダッシュボード (Workers の subdomain 設定) で変えられる。新しい URL の証明書が発行されるまで数分かかり、その間は TLS の接続に失敗する。
 
 `wrangler.jsonc` の回数制限 (`ratelimits`) の `namespace_id` は Cloudflare アカウント内で一意な整数にする。ほかの Worker と同じ値だと回数を共有する。
 
